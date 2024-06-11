@@ -1,8 +1,9 @@
-package model;
+package interfaces;
 
-public interface Material {
+public interface InfoBooks {
 	
 	public abstract void exibirDetalhes();
 
 	public abstract String getTitulo();
+	
 }

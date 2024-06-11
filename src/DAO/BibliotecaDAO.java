@@ -1,22 +1,33 @@
 package DAO;
-import model.Material;
-
 import java.util.ArrayList;
+
+import interfaces.InfoBooks;
+import interfaces.InfoLoans;
+import interfaces.InfoLogin;
+import interfaces.InfoUsers;
 
 public class BibliotecaDAO {
 
-	ArrayList<Material> materiais;
+	ArrayList<InfoBooks> books;
+	ArrayList<InfoUsers> users;
+	ArrayList<InfoLoans> loans;
+	ArrayList<InfoLogin> login;
 	private static BibliotecaDAO biblioteca;
 	
-	//Construtor privado
+	//Private Constructor
 	private BibliotecaDAO() {
-		this.materiais = new ArrayList<>();
+		this.books = new ArrayList<>();
+		this.users = new ArrayList<>();
+		this.loans = new ArrayList<>();
+		this.login = new ArrayList<>();
 	}
 	
-	public ArrayList<Material> getArrayMateriais() {
-		return materiais;
-	}
-	
+	//Getters & Setters
+	public ArrayList<InfoBooks> getArrayBooks() {return books;}
+	public ArrayList<InfoUsers> getArrayUsers() {return users;}
+	public ArrayList<InfoLoans> getArrayLoans() {return loans;}
+	public ArrayList<InfoLogin> getArrayLogin() {return login;}
+
 	//Singleton
 	public static BibliotecaDAO getInstance() {
 		if (biblioteca == null) {biblioteca = new BibliotecaDAO();}

@@ -1,0 +1,49 @@
+ana.cristina.070@ufrn.edu.br
+senha123
+1
+Algebra Linear
+Gustavo Antunes
+Matemática básica
+2017
+8
+1
+Quimica Fundamental
+Pedro Paulo de Arantes
+Química
+2001
+10
+1
+Linguagem Java - Easy version
+Gustavo Guanabara
+Programação
+2020
+7
+1
+Estrutura basica de dados
+Willian Frederico
+Programação
+1998
+3
+1
+Fundamentos da educação contemporanea
+Paulo Freire
+Educação
+1975
+5
+2
+
+//Pesquisar livro - (Achar)
+BibliotecaFunctions.pesquisarMaterial("Linguagem Java - Easy version");
+System.out.println("============================================================");
+        
+//Pesquisar livro - (Não achar)
+BibliotecaFunctions.pesquisarMaterial("Nada para pesquisar");
+System.out.println("============================================================");
+
+//Remove um livro
+BibliotecaFunctions.removerMaterial("Linguagem Java - Easy version");
+System.out.println("============================================================");
+
+//Pesquisar livro - (Não achar por ter sido deletado)
+BibliotecaFunctions.pesquisarMaterial("Linguagem Java - Easy version");
+System.out.print("============================================================");
