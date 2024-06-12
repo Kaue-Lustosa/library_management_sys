@@ -38,6 +38,28 @@ Efésios Clécio
 Linguagem Java - Easy version
 Teacher
 4
+Efésios Clécio
+Estrutura basica de dados
+Teacher
+4
+Efésios Clécio
+Fundamentos da educação contemporanea
+Teacher
+4
+Efésios Clécio
+Fundamentos da educação contemporanea
+Teacher
+4
+Efésios Clécio
+Fundamentos da educação contemporanea
+Teacher
+4
+Efésios Clécio
+Fundamentos da educação contemporanea
+Teacher
+3
+Fundamentos da educação contemporanea
+4
 Maria Gabriela
 Linguagem Java - Easy version
 Student
@@ -59,8 +81,10 @@ yes
 2
 7
 Efésios Clécio
+Teacher
 7
 Maria Gabriela
+Student
 8
 Efésios Clécio
 9

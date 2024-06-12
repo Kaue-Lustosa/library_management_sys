@@ -12,13 +12,13 @@ import interfaces.InfoLoans;
 import interfaces.InfoLogin;
 import interfaces.InfoUsers;
 
-public abstract class BibliotecaFunctions {
+public abstract class Operations {
 	
 	private static BibliotecaDAO bibliotecaDAO = BibliotecaDAO.getInstance();
 	ArrayList<InfoBooks> materiais;
 	ArrayList<InfoUsers> users;
 	
-	public BibliotecaFunctions() {}
+	public Operations() {}
 	
 	//About what will be used in the library
 	private static String getCurrentDate() {
@@ -60,9 +60,9 @@ public abstract class BibliotecaFunctions {
         if (materiais == null || materiais.isEmpty()) {
             System.out.println("A biblioteca está sem materiais no momento.");
         } else {
-            System.out.println("Lista de materiais no momento:");
+            System.out.println("\nLista de materiais no momento:\n");
             for (InfoBooks material : materiais) {
-                System.out.println(material.getTitle());
+                System.out.println(" - " + material.getTitle());
             }
         }
     }
@@ -106,10 +106,26 @@ public abstract class BibliotecaFunctions {
 	public static void loanBook(String username, String book, String usertype) {
         InfoBooks material = buscaPorNome(book);
         if (material != null && material.getStock() > 0) {
-            Loan loan = new Loan(username, book, getCurrentDate(), getReturnDate(usertype));
-            bibliotecaDAO.getArrayLoans().add(loan);
-            material.setStock(material.getStock() - 1);
-            System.out.println("Book '" + book + "' loaned to " + username);
+        	boolean check = false;
+        	check = verifyUser(username, usertype);
+        	if(check == false) {
+                System.out.println("It wasn't possible to loan the book '" + book + "' to the user " + username + ".");
+        	} else {
+        		Loan loan = new Loan(username, book, getCurrentDate(), getReturnDate(usertype));
+        		InfoLoans user = getActiveLoansByUser(username);
+        		if(user != null) {
+                    user.setActiveLoans(user.getActiveLoans() + 1);
+                    bibliotecaDAO.getArrayLoans().add(loan);
+                    material.setStock(material.getStock() - 1);
+                    System.out.println("Book '" + book + "' loaned to " + username);
+                    System.out.println("Now, " + username + " haves " + user.getActiveLoans() + " active loans.");
+        		} else {
+        			loan = new Loan(username, book, getCurrentDate(), getReturnDate(usertype));
+        	        loan.setActiveLoans(1);
+        	        bibliotecaDAO.getArrayLoans().add(loan);
+                    System.out.println("Now, " + username + " haves " + loan.getActiveLoans() + " active loans.");
+        		}
+        	}
         } else {
             System.out.println("This book is not available in stock for loan.");
         }
@@ -118,15 +134,30 @@ public abstract class BibliotecaFunctions {
 	public static void returnBook(String user, String book) {
         InfoLoans loan = buscaPorEmprestimo(user, book);
         if (loan != null) {
-            bibliotecaDAO.getArrayLoans().remove(loan);
+        	loan.setActiveLoans(loan.getActiveLoans() - 1);
+        	if(loan.getActiveLoans() == 0) {
+                bibliotecaDAO.getArrayLoans().remove(loan);
+                System.out.println("User '" + user + "' have returned his last book loaned ");
+        	} else {
+                System.out.println("Book '" + book + "' returned by " + user);
+        	}
             InfoBooks material = buscaPorNome(book);
             material.setStock(material.getStock() + 1);
-            System.out.println("Book '" + book + "' returned by " + user);
         } else {
-            System.out.println("This loan does not exist.");
+            System.out.println("This user isn't with any active loan in the moment.");
         }
     }
 	
+	//About info of users
+	private static InfoLoans getActiveLoansByUser(String username) {
+	    for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
+	        if (loan.getUser().equalsIgnoreCase(username)) {
+	            return loan;
+	        }
+	    }
+	    return null;
+	}
+
 	private static InfoLoans buscaPorEmprestimo(String user, String book) {
         for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
             if (loan.getUser().equalsIgnoreCase(user) && loan.getBook().equalsIgnoreCase(book)) {
@@ -136,21 +167,39 @@ public abstract class BibliotecaFunctions {
         return null;
     }
 	
-	public static void verifyUser(String username) {
-        int count = 0;
-        for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
-            if (loan.getUser().equalsIgnoreCase(username)) {
-                count++;
-            }
+	public static boolean verifyUser(String username, String usertype) {
+		InfoLoans loan = getActiveLoansByUser(username);
+		if(loan != null) {
+			if (usertype.equalsIgnoreCase("Teacher") || usertype.equalsIgnoreCase("Librarian")) {
+	        	if(loan.getActiveLoans() < 5) {
+	        		System.out.println("\nThe user " + username + " haves " + loan.getActiveLoans() + " active loans.");
+	                return true;
+	            } if (loan.getActiveLoans() >= 5) {
+	                System.out.println("\nThe user " + username + " reached the maximum number of loans possible!");
+	                return false;
+	            }
+	        }
+	        if (usertype.equalsIgnoreCase("Student")) {
+	        	if(loan.getActiveLoans() < 3) {
+	        		System.out.println("\nThe user " + username + " haves " + loan.getActiveLoans() + " active loans.");
+	                return true;
+	            } if (loan.getActiveLoans() >= 3) {
+	                System.out.println("\nThe user " + username + " reached the maximum number of loans possible!");
+	                return false;
+	            }
+	        }
+		} else {
+            System.out.println("\nThe user " + username + " haves " + 0 + " active loans.");
+            return true;
         }
-        System.out.println("O usuário " + username + " tem " + count + " empréstimos ativos.");
+        return false;
     }
 
     public static void listUserLoans(String username) {
-        System.out.println("Empréstimos ativos do usuário " + username + ":");
+        System.out.println("\nEmpréstimos ativos do usuário " + username + ":");
         for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
             if (loan.getUser().equalsIgnoreCase(username)) {
-                System.out.println("Livro: " + loan.getBook() + ", Data de empréstimo: " + loan.getLoanDate() + ", Data de devolução: " + loan.getReturnDate());
+                System.out.println(" - Livro: " + loan.getBook() + ", Data de empréstimo: " + loan.getLoanDate() + ", Data de devolução: " + loan.getReturnDate());
             }
         }
     }
@@ -235,19 +284,18 @@ public abstract class BibliotecaFunctions {
                 System.out.println(ammount);
         		cadastrarMaterial(title_added, author, subject, year, ammount);
                 System.out.println("\nBook " + title_added + " registered into library!\n");
-                System.out.println("============================================================");
+                System.out.println("========================================================================================================================");
                 programInterface(leitor);
         	case 2:
-        		System.out.println("============================================================\n");
         		exibirListaMateriais();
-        		System.out.println("\n============================================================");
+        		System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 3:
                 System.out.print("\nType the book's title you want to search: ");
                 String title_search = leitor.nextLine();
                 System.out.println(title_search);
         		pesquisarMaterial(title_search);
-        		System.out.println("\n============================================================");
+        		System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 4:
                 System.out.print("\nType the user's name: "); 
@@ -260,7 +308,7 @@ public abstract class BibliotecaFunctions {
                 String user_type = leitor.nextLine();
                 System.out.println(user_type);
                 loanBook(user_loaning, title_loaned, user_type);
-                System.out.println("\n============================================================");
+                System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 5:
         		System.out.print("\nType the user's name: ");
@@ -270,7 +318,7 @@ public abstract class BibliotecaFunctions {
                 String title_returned = leitor.nextLine();
                 System.out.println(title_returned);
                 returnBook(user_name, title_returned);
-                System.out.println("\n============================================================");
+                System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 6:
         		System.out.print("Type the book's title you want to remove: ");
@@ -284,29 +332,33 @@ public abstract class BibliotecaFunctions {
                 System.out.println(answer);
                 if(answer.equals("yes")|| answer.equals("y")) {
                 	removerMaterial(title_removed, ammount_removed);
-                    System.out.println("\n============================================================");
+                    System.out.println("\n========================================================================================================================");
                     programInterface(leitor);
                 } if (answer.equals("no")|| answer.equals("n")) {
-                	System.out.println("\n============================================================");
+                	System.out.println("\n Canceling operation...");
+                	System.out.println("\n========================================================================================================================");
                     programInterface(leitor);
                 } else {
                 	System.out.println("\nType a valid entry.");
-                	System.out.println("\n============================================================");
+                	System.out.println("\n========================================================================================================================");
                     programInterface(leitor);
                 }
         	case 7:
         		System.out.print("\nType the user's name: ");
                 String user_verified = leitor.nextLine();
                 System.out.println(user_verified);
-                verifyUser(user_verified);
-                System.out.println("\n============================================================");
+        		System.out.print("Type the user's type: ");  //TODO implement a sorter to identify the user's type by the registration ID
+        		String user_category = leitor.nextLine();
+                System.out.println(user_category);
+                verifyUser(user_verified, user_category);
+                System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 8:
         		System.out.print("\nType the user's name: ");
                 String user_listed = leitor.nextLine();
                 System.out.println(user_listed);
                 listUserLoans(user_listed);
-                System.out.println("\n============================================================");
+                System.out.println("\n========================================================================================================================");
                 programInterface(leitor);
         	case 9:
         		System.out.println("\nClosing the program...\n");
