@@ -1,12 +1,11 @@
 import utils.BibliotecaFunctions;
 import java.util.Scanner;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
 
 public class Main {
 
     public static void main(String[] args) {
-    	    	
+    	
     	BibliotecaFunctions.registerLibrarian("Ana Cristina", "070.992.006-12", "512.2021.500.21", "24/04/2000", "ana.cristina.070@ufrn.edu.br", "senha123");
     	
     	BibliotecaFunctions.registerTeacher("André Salomão", "882.355.182-49", "809.2013.745.33", "DEART", "24/04/1980");
@@ -22,33 +21,25 @@ public class Main {
     	BibliotecaFunctions.registerStudent("Maria Gabriela", "889.239.792-22", "098.2019.501.24", "Tecnologia da Informação", "24/04/1995");
 
     	boolean check = false;
-    	
-    	try {
-    		FileReader archive = new FileReader("src/utils/presets.txt");
-            Scanner leitor = new Scanner(archive);
+
+        Scanner scanner = new Scanner(System.in);
                     	
-            System.out.println("============================================================");
-            System.out.println("\nWelcome to the Digital Library System - DLS!\n");
-            System.out.println("============================================================");
-            System.out.print("\nLogin: ");
-            String login = leitor.nextLine();
-            System.out.print(login);
-            System.out.print("\nPassword: ");
-            String password = leitor.nextLine();
-            System.out.print(password);
-            check = BibliotecaFunctions.loginUser(login, password);
-            System.out.println("\n============================================================");
-            if(!check) {
-            	System.out.println("\nClosing the program...\n");
-            } else {
-            	BibliotecaFunctions.programInterface(leitor);
-            }
-                        
-            leitor.close();
-        } catch (FileNotFoundException a) {
-            System.out.println("Ocorreu um erro.");
-            a.printStackTrace();
+        System.out.println("============================================================");
+        System.out.println("\nWelcome to the Digital Library System - DLS!\n");
+        System.out.println("============================================================");
+        System.out.print("\nLogin: ");
+        String login = scanner.nextLine();
+        System.out.print("\nPassword: ");
+        String password = scanner.nextLine();
+        check = BibliotecaFunctions.loginUser(login, password);
+        System.out.println("\n============================================================");
+        if(!check) {
+        	System.out.println("\nClosing the program...\n");
+        } else {
+        	BibliotecaFunctions.programInterface();
         }
+        
+        scanner.close();
     	
     	
     }

@@ -200,7 +200,8 @@ public abstract class BibliotecaFunctions {
 	}
 
 	//About the program itself
-	public static void programInterface(Scanner leitor) {
+	public static void programInterface() {
+		
 		Scanner scanner = new Scanner(System.in);
 		
 		System.out.println("\n1. Add a book");
@@ -213,101 +214,83 @@ public abstract class BibliotecaFunctions {
         System.out.println("8. List user's loans");
         System.out.println("9. Quit");
         System.out.print("\nType your entry: ");
-        int action = Integer.parseInt(leitor.nextLine());
-        System.out.println(action);
-
+        int action = Integer.parseInt(scanner.nextLine());
         switch(action) {
         	case 1:
                 System.out.print("\nType the book's title: ");
-                String title_added = leitor.nextLine();
-                System.out.println(title_added);
+                String title_added = scanner.nextLine();
                 System.out.print("Type the book's author: ");
-                String author = leitor.nextLine();
-                System.out.println(author);
+                String author = scanner.nextLine();
                 System.out.print("Type the book's subject: ");
-                String subject = leitor.nextLine();
-                System.out.println(subject);
+                String subject = scanner.nextLine();
                 System.out.print("Type the book's release year: ");
-                String year = leitor.nextLine();
-                System.out.println(year);
+                String year = scanner.nextLine();
                 System.out.print("Type the ammount of books stocked: ");
-                int ammount = Integer.parseInt(leitor.nextLine());
-                System.out.println(ammount);
+                int ammount = Integer.parseInt(scanner.nextLine());
         		cadastrarMaterial(title_added, author, subject, year, ammount);
                 System.out.println("\nBook " + title_added + " registered into library!\n");
                 System.out.println("============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 2:
         		System.out.println("============================================================\n");
         		exibirListaMateriais();
         		System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 3:
                 System.out.print("\nType the book's title you want to search: ");
-                String title_search = leitor.nextLine();
-                System.out.println(title_search);
+                String title_search = scanner.nextLine();
         		pesquisarMaterial(title_search);
         		System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 4:
                 System.out.print("\nType the user's name: "); 
-                String user_loaning = leitor.nextLine();
-                System.out.println(user_loaning);
+                String user_loaning = scanner.nextLine();
                 System.out.print("Type the book's title: ");
-                String title_loaned = leitor.nextLine();
-                System.out.println(title_loaned);
+                String title_loaned = scanner.nextLine();
                 System.out.print("Type the user's type: "); //TODO implement a sorter to identify the user's type by the registration ID
-                String user_type = leitor.nextLine();
-                System.out.println(user_type);
+                String user_type = scanner.nextLine();
                 loanBook(user_loaning, title_loaned, user_type);
                 System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 5:
         		System.out.print("\nType the user's name: ");
-                String user_name = leitor.nextLine();
-                System.out.println(user_name);
+                String user_name = scanner.nextLine();
                 System.out.print("Type the book's title: ");
-                String title_returned = leitor.nextLine();
-                System.out.println(title_returned);
+                String title_returned = scanner.nextLine();
                 returnBook(user_name, title_returned);
                 System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 6:
         		System.out.print("Type the book's title you want to remove: ");
-                String title_removed = leitor.nextLine();
-                System.out.println(title_removed);
+                String title_removed = scanner.nextLine();
                 System.out.print("Type the ammount of books you want to remove from stock: ");
-                int ammount_removed = Integer.parseInt(leitor.nextLine());
-                System.out.println(ammount_removed);
+                int ammount_removed = Integer.parseInt(scanner.nextLine());
         		System.out.print("Are you sure you want to remove the book " + title_removed + " from the library? (y/n) ");
-        		String answer = leitor.nextLine();
-                System.out.println(answer);
+        		String answer = scanner.nextLine();
                 if(answer.equals("yes")|| answer.equals("y")) {
                 	removerMaterial(title_removed, ammount_removed);
                     System.out.println("\n============================================================");
-                    programInterface(leitor);
+                    programInterface();
                 } if (answer.equals("no")|| answer.equals("n")) {
                 	System.out.println("\n============================================================");
-                    programInterface(leitor);
+                    programInterface();
                 } else {
                 	System.out.println("\nType a valid entry.");
                 	System.out.println("\n============================================================");
-                    programInterface(leitor);
+                    programInterface();
                 }
         	case 7:
         		System.out.print("\nType the user's name: ");
-                String user_verified = leitor.nextLine();
-                System.out.println(user_verified);
+                String user_verified = scanner.nextLine();
                 verifyUser(user_verified);
                 System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 8:
         		System.out.print("\nType the user's name: ");
-                String user_listed = leitor.nextLine();
-                System.out.println(user_listed);
+                String user_listed = scanner.nextLine();
                 listUserLoans(user_listed);
                 System.out.println("\n============================================================");
-                programInterface(leitor);
+                programInterface();
         	case 9:
         		System.out.println("\nClosing the program...\n");
         		System.exit(0);
