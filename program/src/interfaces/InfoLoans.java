@@ -10,5 +10,6 @@ public interface InfoLoans {
 	public void setLoanDate(String loanDate);
 	public String getReturnDate();
 	public void setReturnDate(String returnDate);
-	
+	public abstract int getActiveLoans();
+	public abstract void setActiveLoans(int activeLoans);
 }

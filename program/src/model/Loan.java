@@ -8,6 +8,7 @@ public class Loan implements InfoLoans {
 	private String book;
 	private String loanDate;
 	private String returnDate;
+    private int activeLoans; //independent variable (ignore this guy, he's better alone)
 	
 	
 	//Empty Constructor
@@ -33,4 +34,6 @@ public class Loan implements InfoLoans {
 	public void setLoanDate(String loanDate) {this.loanDate = loanDate;}
 	public String getReturnDate() {return returnDate;}
 	public void setReturnDate(String returnDate) {this.returnDate = returnDate;}
+	public int getActiveLoans() {return activeLoans;}
+	public void setActiveLoans(int activeLoans) {this.activeLoans = activeLoans;}
 }

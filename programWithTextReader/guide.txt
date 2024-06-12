@@ -1,0 +1,78 @@
+Manual do Usuário para o Sistema de Gerenciamento de Bibliotecas!
+
+
+1. Introdução
+
+Este manual fornece instruções detalhadas sobre como usar o Sistema de Gerenciamento de Bibliotecas. O sistema foi desenvolvido em 
+Java e é executado no console.
+Antes de qualquer coisa, se quiser um exemplo de execução, deixei um arquivo chamado presets.txt na pasta utils onde você pode ver 
+exemplos de execução por linhas
+
+
+2. Iniciando o Sistema
+
+Para iniciar o sistema, execute o arquivo Main.java. Você será recebido com a seguinte mensagem:
+
+============================================================
+Welcome to the Digital Library System - DLS!
+============================================================
+Login: 
+
+
+Digite seu login e, logo em seguida, sua senha para acessar o sistema. Se as credenciais estiverem corretas, você será levado para a 
+interface principal do programa.
+Detalhe: Por enquanto, use o login "ana.cristina.070@ufrn.edu.br" e a senha "senha123" para acessar. E sim, ambos login e senha são 
+"aleatórios".
+
+
+3. Interface Principal do Programa
+
+A interface principal do programa apresenta várias opções que você pode escolher digitando o número correspondente. As opções são as 
+seguintes:
+
+1. Cadastrar Material: Permite adicionar um novo livro à biblioteca. Você precisará fornecer o título, autor, assunto, ano de 
+lançamento e quantidade de livros em estoque.
+Você pode cadastrar quantos livros quiser, mas - por enquanto - evite cadastrar livros com o mesmo nome. Em breve, pretendo criar uma 
+função que reclame caso isso aconteça. Além disso, quero implementar funções que somem materiais com o mesmo nome, mas isso aí é papo
+pra outra hora.
+
+2. Exibir Lista de Materiais: Mostra todos os livros disponíveis na biblioteca.
+
+3. Pesquisar Material: Permite pesquisar um livro pelo título.
+Para realizar uma pesquisa, basta digitar o título do livro que você quer pesquisar. Haverá o retorno de um print avisando se o livro
+existe na biblioteca e, caso exista, quantas cópias do livro estão em estoque no momento. Em breve, pretendo implementar uma função 
+que permita você escolher o tipo de pesquisa. Isto é, se você quer pesquisar por título, por autor, por ano de lançamento, etc.
+
+4. Emprestar Livro: Permite a um usuário emprestar um livro. Você precisará fornecer o nome do usuário, o título do livro e o tipo de 
+usuário.
+Detalhe importante: tipo de usuário significa que você precisa dizer se ele é professor, aluno ou bibliotecário. Por favor, insira 
+este campo EM INGLÊS. Teacher = professor, Student = aluno, Librarian = bibliotecário.
+Você receberá prints informando se o processo ocorreu como o devido. Verifique sempre antes se o livro está no estoque (função 3.) e
+se o usuário possui o limite de empréstimos máximos respeitado. Caso o limite tenha sido estourado, eu fiz uma função que reclama 
+quando isso acontece, pode testar a vontade.
+
+5. Devolver Livro: Permite a um usuário devolver um livro. Você precisará fornecer o nome do usuário e o título do livro.
+Aqui não tem segredo. É só digitar o nome do(a) querido(a) e o livro que ele vai devolver que você recebe um aviso informando que
+o livro (caso ele possa) será devolvido. Se o livro não existir ou alguma condição não for atendida, você receberá um erro e o
+programa voltará à tela inicial.
+
+6. Remover Material: Permite remover um livro da biblioteca. Você precisará fornecer o título do livro e a quantidade de livros a 
+serem removidos. Além disso, é importante confirmar se você realmente deseja fazer isso. "Suas ações tem consequências..."
+Detalhe interessante... se você tentar remover uma quantidade além da existente no estoque, um erro irá aparecer na tela avisando,
+obviamente, que você tá fazendo besteira. Além disso, remover a quantidade exata de livros remove ele da lista de livros na
+biblioteca. Se você só remover uma quantidade menor que o total, receberá um aviso informando que a operação foi feita com sucesso.
+Você sempre pode checar esses resultados usando a ferramenta 2. ou 3., listar e procurar um livro - respectivamente.
+
+7. Verificar Usuário: Verifica as informações de um usuário. Você precisará fornecer o nome e o tipo do usuário.
+Lembrando: tipo de usuário é a ocupação dele. Digite teacher se ele for um professor, student se for um estudante e librarian caso
+o sujeito que você está querendo curiar é um bibliotecário.
+
+8. Listar Empréstimos do Usuário: Lista todos os livros emprestados por um usuário. Você precisará fornecer o nome do usuário.
+Aqui também não tem segredo. O programa vai imprimir a lista de empréstimos que o usuário tem com todos os detalhes sobre a
+operação. Isto é, você verá o nome do livro, a data do empréstimo e a data de devolução.
+
+9. Sair do Programa: Encerra o programa.
+
+4. Encerrando o Sistema
+
+Para encerrar o sistema, digite 9 na interface principal do programa.
