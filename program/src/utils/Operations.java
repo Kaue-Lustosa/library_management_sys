@@ -27,7 +27,7 @@ public abstract class Operations {
 	    return currentDate.format(formatter);
 	}
 	
-	private static String getReturnDate(String userType) {
+	private static String returnDate(String userType) {
 	    LocalDate returnDate;
 	    if (userType.equalsIgnoreCase("teacher") || userType.equalsIgnoreCase("librarian")) {
 	        returnDate = LocalDate.now().plusDays(30);
@@ -103,107 +103,165 @@ public abstract class Operations {
 	    }
     }
 	
-	public static void loanBook(String username, String book, String usertype) {
+	public static void loanBook(String cpf, String book) {
         InfoBooks material = buscaPorNome(book);
         if (material != null && material.getStock() > 0) {
         	boolean check = false;
-        	check = verifyUser(username, usertype);
-        	if(check == false) {
-                System.out.println("It wasn't possible to loan the book '" + book + "' to the user " + username + ".");
-        	} else {
-        		InfoLoans user = getActiveLoansByUser(username);
-        		if(user != null) {
-            		Loan loan = new Loan(username, book, getCurrentDate(), getReturnDate(usertype));
-                    user.setActiveLoans(user.getActiveLoans() + 1);
-                    bibliotecaDAO.getArrayLoans().add(loan);
-                    material.setStock(material.getStock() - 1);
-                    System.out.println("Book '" + book + "' loaned to " + username);
-                    System.out.println("Now, " + username + " haves " + user.getActiveLoans() + " active loans.");
-        		} else {
-        			Loan loan = new Loan(username, book, getCurrentDate(), getReturnDate(usertype));
-        	        loan.setActiveLoans(1);
-        	        bibliotecaDAO.getArrayLoans().add(loan);
-                    material.setStock(material.getStock() - 1);
-                    System.out.println("Book '" + book + "' loaned to " + username);
-                    System.out.println("Now, " + username + " haves " + loan.getActiveLoans() + " active loans.");
-        		}
+        	check = verifyUser(verifyUserType(cpf));
+        	for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+                if (user.getCPF().equals(cpf)) {
+                	if(check == false) {
+                        System.out.println("It wasn't possible to loan the book '" + book + "' to the user " + user.getName() + ".");
+                	} else {
+                		InfoLoans users = getActiveLoansByUser(user.getName());
+                		if(users != null) {
+                    		Loan loan = new Loan(user.getName(), book, getCurrentDate(), returnDate(verifyUserType(cpf)));
+                            users.setActiveLoans(users.getActiveLoans() + 1);
+                            bibliotecaDAO.getArrayLoans().add(loan);
+                            material.setStock(material.getStock() - 1);
+                            System.out.println("Book '" + book + "' loaned to " + user.getName());
+                            System.out.println("Now, " + user.getName() + " haves " + users.getActiveLoans() + " active loans.");
+                		} else {
+                			Loan loan = new Loan(user.getName(), book, getCurrentDate(), returnDate(verifyUserType(cpf)));
+                	        loan.setActiveLoans(1);
+                	        bibliotecaDAO.getArrayLoans().add(loan);
+                            material.setStock(material.getStock() - 1);
+                            System.out.println("Book '" + book + "' loaned to " + user.getName());
+                            System.out.println("Now, " + user.getName() + " haves " + loan.getActiveLoans() + " active loans.");
+                		}
+                	}
+                } else {
+                    System.out.println("Usuário com o CPF " + cpf + " não registrado.");
+                }
         	}
+        	
         } else {
             System.out.println("This book is not available in stock for loan.");
         }
     }
 	
-	public static void returnBook(String user, String book) {
-        InfoLoans loan = buscaPorEmprestimo(user, book);
+	public static void returnBook(String cpf, String book) {
+        InfoLoans loan = buscaPorEmprestimo(cpf, book);
         if (loan != null) {
         	loan.setActiveLoans(loan.getActiveLoans() - 1);
-        	if(loan.getActiveLoans() == 0) {
-                System.out.println("User '" + user + "' have returned his last book loaned ");
-        	} else {
-                System.out.println("Book '" + book + "' returned by " + user);
+        	for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+                if (user.getCPF().equals(cpf)) {
+                	if(loan.getActiveLoans() == 0) {
+                        System.out.println("User '" + user.getName() + "' have returned his last book loaned ");
+                	} else {
+                        System.out.println("Book '" + book + "' returned by " + user.getName());
+                	}
+                    bibliotecaDAO.getArrayLoans().remove(loan);
+                    InfoBooks material = buscaPorNome(book);
+                    material.setStock(material.getStock() + 1);
+                }  else {
+                    System.out.println("Usuário com o CPF " + cpf + " não registrado.");
+                }
         	}
-            bibliotecaDAO.getArrayLoans().remove(loan);
-            InfoBooks material = buscaPorNome(book);
-            material.setStock(material.getStock() + 1);
         } else {
             System.out.println("This user isn't with any active loan in the moment.");
         }
     }
 	
 	//About info of users
-	private static InfoLoans getActiveLoansByUser(String username) {
+	private static InfoLoans getActiveLoansByUser(String cpf) {
 	    for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
-	        if (loan.getUser().equalsIgnoreCase(username)) {
+	        if (loan.getCPF().equals(cpf)) {
 	            return loan;
 	        }
 	    }
 	    return null;
 	}
 
-	private static InfoLoans buscaPorEmprestimo(String user, String book) {
+	private static InfoLoans buscaPorEmprestimo(String cpf, String book) {
         for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
-            if (loan.getUser().equalsIgnoreCase(user) && loan.getBook().equalsIgnoreCase(book)) {
+            if (loan.getCPF().equalsIgnoreCase(cpf) && loan.getBook().equalsIgnoreCase(book)) {
                 return loan;
             }
         }
         return null;
     }
 	
-	public static boolean verifyUser(String username, String usertype) {
-		InfoLoans loan = getActiveLoansByUser(username);
+	public static String verifyUserType(String cpf) {
+        for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+            if (user.getCPF().equals(cpf)) {
+            	if (user.getMatricula().matches("\\d{3}\\.\\d{4}\\.745\\.\\d{2}")) {
+                    return "Teacher";
+                } else if (user.getMatricula().matches("\\d{3}\\.\\d{4}\\.500\\.\\d{2}")) {
+                    return "Student";
+                } else if (user.getMatricula().matches("\\d{3}\\.\\d{4}\\.501\\.\\d{2}")) {
+                    return "Librarian";
+                }
+            }
+        }
+        return "Usuário com o CPF " + cpf + " não registrado.";
+	}
+	
+	public static boolean verifyUser(String cpf) {
+		InfoLoans loan = getActiveLoansByUser(cpf);
 		if(loan != null) {
-			if (usertype.equalsIgnoreCase("Teacher") || usertype.equalsIgnoreCase("Librarian")) {
-	        	if(loan.getActiveLoans() < 5) {
-	        		System.out.println("\nThe user " + username + " haves " + loan.getActiveLoans() + " active loans.");
-	                return true;
-	            } if (loan.getActiveLoans() >= 5) {
-	                System.out.println("\nThe user " + username + " reached the maximum number of loans possible!");
-	                return false;
+			if (verifyUserType(cpf).equalsIgnoreCase("Teacher") || verifyUserType(cpf).equalsIgnoreCase("Librarian")) {
+				for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+                    if (user.getCPF().equals(cpf)) {
+                    	if(loan.getActiveLoans() < 5) {
+	                    	System.out.println("\nThe user " + user.getName() + " haves " + loan.getActiveLoans() + " active loans.");
+	    	                return true;
+	                    }
+		        		if (loan.getActiveLoans() >= 5) {
+			                System.out.println("\nThe user " + user.getName() + " reached the maximum number of loans possible!");
+			                return false;
+			            
+		        		}
+                    } else {
+                        System.out.println("Usuário com o CPF " + cpf + " não registrado.");
+                    }
 	            }
 	        }
-	        if (usertype.equalsIgnoreCase("Student")) {
-	        	if(loan.getActiveLoans() < 3) {
-	        		System.out.println("\nThe user " + username + " haves " + loan.getActiveLoans() + " active loans.");
-	                return true;
-	            } if (loan.getActiveLoans() >= 3) {
-	                System.out.println("\nThe user " + username + " reached the maximum number of loans possible!");
-	                return false;
+	        if (verifyUserType(cpf).equalsIgnoreCase("Student")) {
+	        	for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+                    if (user.getCPF().equals(cpf)) {
+                    	if(loan.getActiveLoans() < 3) {
+	                    	System.out.println("\nThe user " + user.getName() + " haves " + loan.getActiveLoans() + " active loans.");
+	    	                return true;
+	                    }
+		        		if (loan.getActiveLoans() >= 3) {
+			                System.out.println("\nThe user " + user.getName() + " reached the maximum number of loans possible!");
+			                return false;
+			            
+		        		}
+                    } else {
+                        System.out.println("Usuário com o CPF " + cpf + " não registrado.");
+                    }
 	            }
+	        } else {
+                System.out.println("Verificação falhou. Tentar novamente.");
 	        }
 		} else {
-            System.out.println("\nThe user " + username + " haves " + 0 + " active loans.");
-            return true;
+			for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+                if (user.getCPF().equals(cpf)) {
+                	System.out.println("\nThe user " + user.getName() + " haves " + 0 + " active loans.");
+                    return true;
+                } else {
+                    System.out.println("Usuário com o CPF " + cpf + " não registrado.");
+                }
+			}
         }
         return false;
     }
 
-    public static void listUserLoans(String username) {
-        System.out.println("\nEmpréstimos ativos do usuário " + username + ":");
-        for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
-            if (loan.getUser().equalsIgnoreCase(username)) {
-                System.out.println(" - Livro: " + loan.getBook() + ", Data de empréstimo: " + loan.getLoanDate() + ", Data de devolução: " + loan.getReturnDate());
+    public static void listUserLoans(String cpf) {
+    	for (InfoUsers user : bibliotecaDAO.getArrayUsers()) {
+            if (user.getCPF().equals(cpf)) {
+            	System.out.println("\nEmpréstimos ativos do usuário " + user.getName() + ":");
+                for (InfoLoans loan : bibliotecaDAO.getArrayLoans()) {
+                    if (loan.getCPF().equalsIgnoreCase(cpf)) {
+                        System.out.println(" - Livro: " + loan.getBook() + ", Data de empréstimo: " + loan.getLoanDate() + ", Data de devolução: " + loan.getReturnDate());
+                    }
+                }
+            } else {
+                System.out.println("Usuário com o CPF " + cpf + " não registrado.");
             }
-        }
+    	}
     }
 	
 	//About registration and authentication
@@ -295,17 +353,15 @@ public abstract class Operations {
 	        		System.out.println("\n============================================================");
 	                programInterface();
 	        	case 4:
-	                System.out.print("\nType the user's name: "); 
+	                System.out.print("\nType the user's CPF: "); 
 	                String user_loaning = scanner.nextLine();
 	                System.out.print("Type the book's title: ");
 	                String title_loaned = scanner.nextLine();
-	                System.out.print("Type the user's type: "); //TODO implement a sorter to identify the user's type by the registration ID
-	                String user_type = scanner.nextLine();
-	                loanBook(user_loaning, title_loaned, user_type);
+	                loanBook(user_loaning, title_loaned);
 	                System.out.println("\n============================================================");
 	                programInterface();
 	        	case 5:
-	        		System.out.print("\nType the user's name: ");
+	        		System.out.print("\nType the user's CPF: ");
 	                String user_name = scanner.nextLine();
 	                System.out.print("Type the book's title: ");
 	                String title_returned = scanner.nextLine();
@@ -332,15 +388,13 @@ public abstract class Operations {
 	                    programInterface();
 	                }
 	        	case 7:
-	        		System.out.print("\nType the user's name: ");
+	        		System.out.print("\nType the user's CPF: ");
 	                String user_verified = scanner.nextLine();
-	        		System.out.print("Type the user's type: ");  //TODO implement a sorter to identify the user's type by the registration ID
-	                String user_category = scanner.nextLine();
-	                verifyUser(user_verified, user_category);
+	                verifyUser(user_verified);
 	                System.out.println("\n============================================================");
 	                programInterface();
 	        	case 8:
-	        		System.out.print("\nType the user's name: ");
+	        		System.out.print("\nType the user's CPF: ");
 	                String user_listed = scanner.nextLine();
 	                listUserLoans(user_listed);
 	                System.out.println("\n============================================================");

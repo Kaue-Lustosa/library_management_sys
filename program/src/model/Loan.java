@@ -4,7 +4,7 @@ import interfaces.InfoLoans;
 
 public class Loan implements InfoLoans {
 	
-	private String user;
+	private String cpf;
 	private String book;
 	private String loanDate;
 	private String returnDate;
@@ -17,17 +17,17 @@ public class Loan implements InfoLoans {
 	}
 	
 	//Constructor
-	public Loan(String user, String book, String loanDate, String returnDate) {
+	public Loan(String cpf, String book, String loanDate, String returnDate) {
 		super();
-		this.user = user;
+		this.cpf = cpf;
 		this.book = book;
 		this.loanDate = loanDate;
 		this.returnDate = returnDate;
 	}
 
 	//Getters & Setters
-	public String getUser() {return user;}
-	public void setUser(String user) {this.user = user;}
+	public String getCPF() {return cpf;}
+	public void setCPF(String cpf) {this.cpf = cpf;}
 	public String getBook() {return book;}
 	public void setBook(String book) {this.book = book;}
 	public String getLoanDate() {return loanDate;}

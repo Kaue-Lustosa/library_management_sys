@@ -2,8 +2,8 @@ package interfaces;
 
 public interface InfoLoans {
 	
-	public String getUser();
-	public void setUser(String user);
+	public String getCPF();
+	public void setCPF(String cpf);
 	public String getBook();
 	public void setBook(String book);
 	public String getLoanDate();
